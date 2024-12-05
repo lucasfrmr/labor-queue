@@ -1,0 +1,122 @@
+/* modified-bootstrap.css */
+
+/* Amazon Color Palette */
+:root {
+    --amazon-orange: #ff9900;
+    --amazon-blue: #146eb4;
+    --amazon-dark: #232f3e;
+    --amazon-light: #f3f3f3;
+    --amazon-gray: #65676b;
+    --amazon-black: #000000; /* Added black for text */
+  }
+  
+  /* Modify Bootstrap's default color scheme with Amazon's colors */
+  .btn-primary {
+    background-color: var(--amazon-orange);
+    border-color: var(--amazon-orange);
+  }
+  
+  .btn-primary:hover {
+    background-color: #e68a00;
+    border-color: #e68a00;
+  }
+  
+  .navbar,
+  .bg-primary {
+    background-color: var(--amazon-dark) !important;
+  }
+  
+  .navbar-brand,
+  .nav-link,
+  .navbar-light .navbar-toggler {
+    color: var(--amazon-light) !important;
+  }
+  
+  .bg-light {
+    background-color: var(--amazon-light) !important;
+  }
+  
+  .text-primary {
+    color: var(--amazon-blue) !important;
+  }
+  
+  /* Table styles */
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--amazon-gray);
+  }
+  
+  /* Borders and shadows for card and other components */
+  .card,
+  .btn,
+  .form-control,
+  .dropdown-menu,
+  .nav-tabs .nav-link.active,
+  .nav-tabs .nav-link.active:focus,
+  .nav-tabs .nav-link.active:hover {
+    border-color: var(--amazon-gray);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Footer and header background */
+  .footer,
+  .header {
+    background-color: var(--amazon-dark);
+    color: var(--amazon-light);
+  }
+  
+  /* Alerts modification */
+  .alert-primary {
+    background-color: var(--amazon-blue);
+    color: var(--amazon-light);
+  }
+  
+  /* Badge styles */
+  .badge-primary {
+    background-color: var(--amazon-orange);
+    color: var(--amazon-light);
+  }
+  
+  /* Buttons hover effect */
+  .btn:hover,
+  .btn:focus {
+    opacity: 0.9;
+  }
+  
+  /* Link color modifications */
+  a,
+  a:hover,
+  a:focus,
+  a:active {
+    color: var(--amazon-orange);
+  }
+  
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--amazon-light);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--amazon-dark);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #1e2d3b;
+  }
+  
+  /* Tab texts to black */
+  .nav-link {
+    color: var(--amazon-black) !important;
+  }
+  
+  .nav-link.active {
+    color: var(--amazon-orange) !important; /* Keep active tab orange */
+  }
+  
+  .nav-tabs .nav-link {
+    border-color: var(--amazon-gray) var(--amazon-gray) var(--amazon-light) !important; /* Update for better contrast */
+  }
+  

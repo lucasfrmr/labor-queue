@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Data Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/modified-bootstrap.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header">
+      User Management
+    </div>
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Total Time</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userList">
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Buttons outside the card, directly in the container -->
+  <button type="button" class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#newUserModal">New User</button>
+  <!-- <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#clearUsersModal">Clear All Users</button> -->
+  <a href="/laborqueue" class="btn btn-primary mt-3">User Queue</a>
+  <!-- <button type="button" class="btn btn-success mt-3" id="restoreUsersButton">Restore Users</button> -->
+  <select id="backupFilesDropdown" class="form-select mt-3">
+    <!-- Options will be dynamically populated -->
+  </select>
+  <button type="button" class="btn btn-warning mt-3" id="backupUsersButton">Backup User Data</button>
+  <button type="button" class="btn btn-success mt-3" id="restoreUsersButton">Restore Selected Backup</button>
+  <button type="button" class="btn btn-danger mt-3" id="deleteBackupButton">Delete Selected Backup</button>
+
+  
+
+</div>
+
+<!-- Modals and Scripts Below -->
+
+<!-- Update User Modal -->
+<div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="updateUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateUserModalLabel">Update User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Form content here -->
+        <form id="updateUserForm" autocomplete="off">
+          <div class="mb-3">
+            <label for="updateUserName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="updateUserName" name="name" required>
+          </div>
+          <div class="mb-3 row">
+            <div class="modal-body">
+              <label for="updateUserHours" class="form-label">Hours</label>
+              <input type="number" class="form-control input-fixed-width" id="updateUserHours" name="updateUserHours" required>
+              <label for="updateUserMinutes" class="form-label">Minutes</label>
+              <input type="number" class="form-control input-fixed-width" id="updateUserMinutes" name="updateUserMinutes" required>
+          </div>
+          </div>
+          <fieldset class="mb-3">
+            <legend>Jobs Trained</legend>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newReach" name="jobsTrained" value="reach">
+              <label class="form-check-label" for="newReach">Reach</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newOP" name="jobsTrained" value="OP">
+              <label class="form-check-label" for="newOP">OP</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newClamp" name="jobsTrained" value="clamp">
+              <label class="form-check-label" for="newClamp">Clamp</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newRelo" name="jobsTrained" value="relo">
+              <label class="form-check-label" for="newRelo">Relo</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newHAU2" name="jobsTrained" value="hau2">
+              <label class="form-check-label" for="newHAU2">HAU2</label>
+            </div>
+          </fieldset>
+        </form>
+        
+        <!-- Existing form elements here -->
+        
+        <!-- Labor Shares Table -->
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Job Type</th>
+              <th>Minutes</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="laborSharesTableBody">
+            <!-- Labor shares will be populated dynamically -->
+          </tbody>
+        </table>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="updateUserButton">Update</button>
+      <button type="button" class="btn btn-danger" id="deleteUserButton">Delete User</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+<!-- New User Modal -->
+<div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newUserModalLabel">New User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="newUserForm" autocomplete="off">
+          <div class="mb-3">
+            <label for="newUserName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="newUserName" name="name" required>
+          </div>
+          <div class="mb-3 row">
+            <div class="modal-body">
+              <label for="updateUserHours" class="form-label">Hours</label>
+              <input type="number" class="form-control input-fixed-width" name="modalUserHours" required>
+              <label for="updateUserMinutes" class="form-label">Minutes</label>
+              <input type="number" class="form-control input-fixed-width" name="modalUserMinutes" required>
+          </div>
+          </div>
+          <fieldset class="mb-3">
+            <legend>Jobs Trained</legend>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newReach" name="jobsTrained" value="reach">
+              <label class="form-check-label" for="newReach">Reach</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newOP" name="jobsTrained" value="OP">
+              <label class="form-check-label" for="newOP">OP</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newClamp" name="jobsTrained" value="clamp">
+              <label class="form-check-label" for="newClamp">Clamp</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newRelo" name="jobsTrained" value="relo">
+              <label class="form-check-label" for="newRelo">Relo</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newHAU2" name="jobsTrained" value="hau2">
+              <label class="form-check-label" for="newHAU2">HAU2</label>
+            </div>
+          </fieldset>
+          <button type="submit" class="btn btn-primary">Create User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Remaining structure -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>
