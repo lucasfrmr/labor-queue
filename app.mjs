@@ -2,19 +2,18 @@ import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import fs from "fs";
 import express from "express";
-import { MongoClient, ServerApiVersion, ObjectId } from "mongodb";
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
 import dotenv from "dotenv";
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const { PORT, MONGODB, AUTH } = process.env;
+const { PORT, AUTH } = process.env;
 
 const app = express();
-const mongo = new MongoClient(MONGODB, { serverApi: ServerApiVersion.v1 });
-
-const db = mongo.db("labor-queue");
+let db;
 
 app.locals.pretty = true;
 app.set("trust proxy", true);
@@ -25,11 +24,36 @@ app.use(express.json());
 app.disable("x-powered-by");
 
 // Connect to the database and start the server
-mongo.connect().then(() => {
+(async () => {
+  db = await open({
+    filename: path.join(__dirname, "database.sqlite"),
+    driver: sqlite3.Database,
+  });
+
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      time TEXT,
+      ip TEXT,
+      method TEXT,
+      url TEXT,
+      headers TEXT
+    );
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      jobsTrained TEXT,
+      totalMinutes INTEGER,
+      jobType TEXT,
+      laborShares TEXT,
+      lastModified TEXT
+    );
+  `);
+
   app.listen(PORT, () => {
     console.log(`Server started on http://localhost:${PORT}`);
   });
-});
+})();
 
 function authentication(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -51,13 +75,16 @@ function authentication(req, res, next) {
 app.get("/", (req, res) => {
   // insert a log into the database
   console.log(req.ip);
-  db.collection("logs").insertOne({
-    time: new Date().toISOString(),
-    ip: req.ip,
-    method: req.method,
-    url: req.url,
-    headers: req.headers,
-  });
+  db.run(
+    `INSERT INTO logs (time, ip, method, url, headers) VALUES (?, ?, ?, ?, ?)`,
+    [
+      new Date().toISOString(),
+      req.ip,
+      req.method,
+      req.url,
+      JSON.stringify(req.headers),
+    ]
+  );
   res.sendFile(__dirname + "/views/index.html");
 });
 
@@ -74,7 +101,7 @@ app.get("/admin", (req, res) => {
 
 app.get("/userdata", async (req, res) => {
   try {
-    const users = await db.collection("users").find().toArray();
+    const users = await db.all(`SELECT * FROM users`);
     res.json(users);
     console.log("get user data" + users);
   } catch (error) {
@@ -87,7 +114,9 @@ app.post("/users", async (req, res) => {
   console.log("Users post data:", req.body);
   try {
     const { name, jobsTrained, totalMinutes } = req.body;
-    const userExists = await db.collection("users").findOne({ name });
+    const userExists = await db.get(`SELECT * FROM users WHERE name = ?`, [
+      name,
+    ]);
     if (userExists) {
       return res
         .status(400)
@@ -96,11 +125,10 @@ app.post("/users", async (req, res) => {
     const jobsTrainedArray = Array.isArray(jobsTrained)
       ? jobsTrained
       : [jobsTrained].filter(Boolean);
-    await db.collection("users").insertOne({
-      name,
-      jobsTrained: jobsTrainedArray,
-      totalMinutes: parseInt(totalMinutes, 10), // Ensure totalMinutes is stored as an integer
-    });
+    await db.run(
+      `INSERT INTO users (name, jobsTrained, totalMinutes) VALUES (?, ?, ?)`,
+      [name, JSON.stringify(jobsTrainedArray), parseInt(totalMinutes, 10)]
+    );
     res.json({ message: "User data submitted successfully." });
   } catch (error) {
     console.error("Failed to submit user data:", error);
@@ -112,13 +140,11 @@ app.put("/users/:id", async (req, res) => {
   const { id } = req.params;
   const { name, jobsTrained, totalMinutes } = req.body;
   try {
-    const updateResult = await db
-      .collection("users")
-      .updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { name, jobsTrained, totalMinutes } }
-      );
-    if (updateResult.modifiedCount === 0) {
+    const updateResult = await db.run(
+      `UPDATE users SET name = ?, jobsTrained = ?, totalMinutes = ? WHERE id = ?`,
+      [name, JSON.stringify(jobsTrained), totalMinutes, id]
+    );
+    if (updateResult.changes === 0) {
       return res
         .status(404)
         .json({ error: "User not found or no changes made." });
@@ -130,15 +156,12 @@ app.put("/users/:id", async (req, res) => {
   }
 });
 
-// Adjust this to your actual ID field name and database setup
 app.delete("/users/:id", async (req, res) => {
   console.log("Delete user data:", req.params);
   try {
     const { id } = req.params;
-    const deleteResult = await db
-      .collection("users")
-      .deleteOne({ _id: new ObjectId(id) }); // Ensure you're using ObjectId if MongoDB
-    if (deleteResult.deletedCount === 0) {
+    const deleteResult = await db.run(`DELETE FROM users WHERE id = ?`, [id]);
+    if (deleteResult.changes === 0) {
       return res.status(404).json({ error: "User not found." });
     }
     res.json({ message: "User deleted successfully." });
@@ -148,10 +171,9 @@ app.delete("/users/:id", async (req, res) => {
   }
 });
 
-// New route to clear all users from the database
 app.post("/clear-users", async (req, res) => {
   try {
-    await db.collection("users").deleteMany({});
+    await db.run(`DELETE FROM users`);
     res.json({ message: "All user data cleared successfully." });
   } catch (error) {
     console.error("Failed to clear user data:", error);
@@ -162,34 +184,32 @@ app.post("/clear-users", async (req, res) => {
 app.post("/submit-queue", async (req, res) => {
   console.log("Queue data:", req.body);
   try {
-    const users = req.body; // This should be an array of user data
+    const users = req.body;
 
     for (let user of users) {
       const { name, minutesTillEndOfShift, jobType, timestamp } = user;
-      // Find the user's record in the database
-      const userRecord = await db.collection("users").findOne({ name });
+      const userRecord = await db.get(`SELECT * FROM users WHERE name = ?`, [
+        name,
+      ]);
       if (!userRecord) {
         console.error("User not found:", name);
-        continue; // Skip this user if not found
+        continue;
       }
-      // Calculate new total minutes
       const newTotalMinutes =
         (userRecord.totalMinutes || 0) + parseInt(minutesTillEndOfShift, 10);
 
-      // Update the user's record with new minutes and job type
-      await db.collection("users").updateOne(
-        { name },
-        {
-          $set: { jobType, totalMinutes: newTotalMinutes },
-          $push: {
-            laborShares: {
-              jobType,
-              minutes: minutesTillEndOfShift,
-              timestamp,
-            },
-          },
-          $currentDate: { lastModified: true },
-        }
+      await db.run(
+        `UPDATE users SET jobType = ?, totalMinutes = ?, laborShares = ?, lastModified = ? WHERE name = ?`,
+        [
+          jobType,
+          newTotalMinutes,
+          JSON.stringify([
+            ...(JSON.parse(userRecord.laborShares || "[]")),
+            { jobType, minutes: minutesTillEndOfShift, timestamp },
+          ]),
+          new Date().toISOString(),
+          name,
+        ]
       );
     }
     res.json({ message: "Queue processed successfully." });
@@ -201,7 +221,7 @@ app.post("/submit-queue", async (req, res) => {
 
 app.post("/backup-users", async (req, res) => {
   try {
-    const users = await db.collection("users").find().toArray();
+    const users = await db.all(`SELECT * FROM users`);
     const filename = `userBackup-${new Date()
       .toLocaleString("en-US", { timeZone: "America/Chicago" })
       .replace(/[/:]/g, "-")}.json`;
@@ -233,17 +253,6 @@ app.get("/list-backups", (req, res) => {
   });
 });
 
-// app.post('/backup-users', async (req, res) => {
-//   try {
-//       const users = await db.collection('users').find().toArray();
-//       fs.writeFileSync(path.join(__dirname, 'backups', 'userBackup.json'), JSON.stringify(users, null, 2));
-//       res.status(200).send("Backup completed successfully.");
-//   } catch (error) {
-//       console.error("Failed to backup user data:", error);
-//       res.status(500).send("Error backing up user data.");
-//   }
-// });
-
 app.post("/restore-users", async (req, res) => {
   try {
     const { filename } = req.body;
@@ -252,39 +261,27 @@ app.post("/restore-users", async (req, res) => {
       "utf8"
     );
     const users = JSON.parse(data);
-    const usersWithObjectId = users.map((user) => ({
-      ...user,
-      _id: new ObjectId(user._id),
-    }));
-    // console.log('restored userData', data);
-    await db.collection("users").deleteMany({});
-    await db.collection("users").insertMany(usersWithObjectId);
+    await db.run(`DELETE FROM users`);
+    for (const user of users) {
+      await db.run(
+        `INSERT INTO users (id, name, jobsTrained, totalMinutes, jobType, laborShares, lastModified) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          user.id,
+          user.name,
+          user.jobsTrained,
+          user.totalMinutes,
+          user.jobType,
+          user.laborShares,
+          user.lastModified,
+        ]
+      );
+    }
     res.status(200).send("Restore completed successfully from " + filename);
   } catch (error) {
     console.error("Failed to restore user data:", error);
     res.status(500).send("Error restoring user data.");
   }
 });
-
-// app.post('/restore-users', async (req, res) => {
-//   try {
-//       const data = fs.readFileSync(path.join(__dirname, 'backups', 'userBackup.json'), 'utf8');
-//       const users = JSON.parse(data);
-
-//       // Convert _id from string to ObjectId
-//       const usersWithObjectId = users.map(user => ({
-//           ...user,
-//           _id: new ObjectId(user._id) // Ensure _id is an ObjectId
-//       }));
-
-//       await db.collection('users').deleteMany({}); // Clear current data
-//       await db.collection('users').insertMany(usersWithObjectId);
-//       res.status(200).send("Restore completed successfully.");
-//   } catch (error) {
-//       console.error("Failed to restore user data:", error);
-//       res.status(500).send("Error restoring user data.");
-//   }
-// });
 
 app.delete("/delete-backup", (req, res) => {
   const { filename } = req.body;
