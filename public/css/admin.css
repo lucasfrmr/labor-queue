@@ -1,3 +1,267 @@
 .input-fixed-width {
     width: 80px;  /* Adjust this width as needed */
-  }
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f3f3f3;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #146eb4;
+    color: #fff;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table thead th {
+    background-color: #232f3e;
+    color: #fff;
+}
+
+.table tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.btn {
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #ff9900;
+    border-color: #ff9900;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #e68a00;
+    border-color: #e68a00;
+}
+
+.btn-secondary {
+    background-color: #65676b;
+    border-color: #65676b;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #4d4d4d;
+    border-color: #4d4d4d;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+
+.btn-success {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #449d44;
+    border-color: #398439;
+}
+
+.btn-warning {
+    background-color: #f0ad4e;
+    border-color: #eea236;
+    color: #fff;
+}
+
+.btn-warning:hover {
+    background-color: #ec971f;
+    border-color: #d58512;
+}
+
+.btn-info {
+    background-color: #5bc0de;
+    border-color: #46b8da;
+    color: #fff;
+}
+
+.btn-info:hover {
+    background-color: #31b0d5;
+    border-color: #269abc;
+}
+
+.btn-light {
+    background-color: #f7f7f7;
+    border-color: #e7e7e7;
+    color: #333;
+}
+
+.btn-light:hover {
+    background-color: #e6e6e6;
+    border-color: #d6d6d6;
+}
+
+.btn-dark {
+    background-color: #292b2c;
+    border-color: #1d1f20;
+    color: #fff;
+}
+
+.btn-dark:hover {
+    background-color: #1c1e1f;
+    border-color: #171819;
+}
+
+.btn-link {
+    font-weight: 400;
+    color: #ff9900;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    color: #e68a00;
+    text-decoration: underline;
+}
+
+.form-control {
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #ff9900;
+    box-shadow: 0 0 0 0.2rem rgba(255, 153, 0, 0.25);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    background-color: #146eb4;
+    color: #fff;
+    border-bottom: 1px solid #ddd;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 10px 20px;
+    border-top: 1px solid #ddd;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 5px;
+    color: #333;
+    transition: background-color 0.3s ease;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #ff9900;
+    color: #fff;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #e6e6e6;
+}
+
+.nav-tabs .nav-link.active:hover {
+    background-color: #e68a00;
+}
+
+.navbar {
+    background-color: #232f3e;
+    color: #fff;
+    padding: 10px 20px;
+}
+
+.navbar-brand,
+.nav-link {
+    color: #fff;
+}
+
+.navbar-brand:hover,
+.nav-link:hover {
+    color: #ff9900;
+}
+
+.footer {
+    background-color: #232f3e;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    margin-top: 20px;
+}
+
+.footer a {
+    color: #ff9900;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #e68a00;
+    text-decoration: underline;
+}

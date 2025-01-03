@@ -328,3 +328,19 @@ document
 //     // reload the page after restoring the data
 //     window.location.reload();
 // });
+
+function addAnimationToButtons() {
+  const buttons = document.querySelectorAll(".btn");
+  buttons.forEach((button) => {
+    button.addEventListener("mouseover", () => {
+      button.classList.add("animate__animated", "animate__pulse");
+    });
+    button.addEventListener("mouseout", () => {
+      button.classList.remove("animate__animated", "animate__pulse");
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  addAnimationToButtons();
+});
