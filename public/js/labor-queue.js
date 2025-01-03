@@ -1,10 +1,5 @@
-// Main functionality on document ready
 document.addEventListener("DOMContentLoaded", function () {
-  // Add checkbox for filtering users with recent labor shares
-  // const excludeCheckbox = document.getElementById('excludeRecentLaborShares');
-  // excludeCheckbox.addEventListener('change', fetchAndDisplayData);
-
-  fetchAndDisplayData(); // Initial data fetch and display
+  fetchAndDisplayData();
 
   function fetchAndDisplayData() {
     fetch("/userdata")
@@ -16,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         const jobTabs = {
-          Dock: null, // Assuming 'Dock' tab includes all users
+          Dock: null,
           Op: "OP",
           Clamp: "clamp",
           Reach: "reach",
@@ -28,13 +23,9 @@ document.addEventListener("DOMContentLoaded", function () {
           const tableBody = document.querySelector(
             `#sortableTable${tab} .list`
           );
-          tableBody.innerHTML = ""; // Clear existing rows
+          tableBody.innerHTML = "";
 
           let filteredData = data.filter((item) => {
-            // if (excludeCheckbox.checked) {
-            //     return (!jobType || item.jobsTrained.includes(jobType)) &&
-            //            !item.laborShares.some(share => new Date(share.timestamp) > twelveHoursAgo);
-            // }
             return !jobType || item.jobsTrained.includes(jobType);
           });
 
@@ -44,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           sortedData.forEach((item) => {
             const rowElement = document.createElement("tr");
-            rowElement.setAttribute("data-user-key", item.name); // Ensure each row has this attribute
+            rowElement.setAttribute("data-user-key", item.name);
             const formattedMinutes = formatMinutesToHours(item.totalMinutes);
             rowElement.innerHTML = `
                         <td class="name">${item.name}</td>
@@ -66,7 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => console.error("Error:", error));
   }
 
-  // Function to add a user to the queue
   function addToQueue(item, jobType) {
     const queueTableBody = document.querySelector("#queueTableBody");
     const formattedTotalTime = formatMinutesToHours(item.totalMinutes);
@@ -86,17 +76,15 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     queueTableBody.appendChild(rowElement);
 
-    // Remove user from all tables
     document
       .querySelectorAll(`tr[data-user-key="${item.name}"]`)
       .forEach((el) => el.remove());
   }
 
-  // Additional handlers and utility functions
   document
     .getElementById("resetQueueButton")
     .addEventListener("click", function () {
-      window.location.reload(); // Refreshes the page
+      window.location.reload();
     });
 
   document
@@ -106,24 +94,23 @@ document.addEventListener("DOMContentLoaded", function () {
       const users = [];
 
       queueTableBody.querySelectorAll("tr").forEach((row) => {
-        const name = row.cells[0].textContent; // Assuming the first cell contains the name
-        const jobType = row.cells[2].textContent; // Assuming the third cell contains the job type
-        let minutesTillEndOfShift = calculateTimeTillEndOfShift(); // Calculate remaining minutes
+        const name = row.cells[0].textContent;
+        const jobType = row.cells[2].textContent;
+        let minutesTillEndOfShift = calculateTimeTillEndOfShift();
 
         console.log(
           `Time till end of shift for ${name}: ${formatMinutesToHours(
             minutesTillEndOfShift
           )}`
-        ); // Logging the time till end of shift
+        );
         users.push({
           name: name,
           jobType: jobType,
           minutesTillEndOfShift: minutesTillEndOfShift,
-          timestamp: new Date().toISOString(), // Include a timestamp for tracking
+          timestamp: new Date().toISOString(),
         });
       });
 
-      // Now send this data to the server
       fetch("/submit-queue", {
         method: "POST",
         headers: {
@@ -140,13 +127,15 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
           console.log("Queue submitted:", data);
           alert("Queue successfully submitted!");
-          queueTableBody.innerHTML = ""; // Clear the queue table after submission
+          queueTableBody.innerHTML = "";
         })
         .catch((error) => {
           console.error("Error submitting queue:", error);
           alert("Failed to submit queue. Check console for more details.");
         });
     });
+
+  addAnimationToButtons();
 });
 
 function formatMinutesToHours(minutes) {
@@ -158,24 +147,35 @@ function formatMinutesToHours(minutes) {
 function calculateTimeTillEndOfShift() {
   let now = new Date();
   let target = new Date();
-  target.setHours(6, 30, 0, 0); // Set the target time to 06:30 AM
+  target.setHours(6, 30, 0, 0);
 
-  // If the current time is already past 06:30 AM today, set the target for the next day
   if (now >= target) {
     target.setDate(target.getDate() + 1);
   }
 
   let timeDifferenceMs = target - now;
-  let minutesTillEndOfShift = Math.floor(timeDifferenceMs / (1000 * 60)); // Convert milliseconds to minutes
+  let minutesTillEndOfShift = Math.floor(timeDifferenceMs / (1000 * 60));
   return minutesTillEndOfShift;
 }
 
 function updateCountdown(userName) {
   const timeCell = document.getElementById(`time-${userName}`);
-  if (!timeCell) return; // In case the row has been removed
+  if (!timeCell) return;
 
   let minutesTillEndOfShift = calculateTimeTillEndOfShift();
   timeCell.textContent = formatMinutesToHours(minutesTillEndOfShift);
 
-  setTimeout(() => updateCountdown(userName), 60000); // Update every minute
+  setTimeout(() => updateCountdown(userName), 60000);
+}
+
+function addAnimationToButtons() {
+  const buttons = document.querySelectorAll(".btn");
+  buttons.forEach((button) => {
+    button.addEventListener("mouseover", () => {
+      button.classList.add("animate__animated", "animate__pulse");
+    });
+    button.addEventListener("mouseout", () => {
+      button.classList.remove("animate__animated", "animate__pulse");
+    });
+  });
 }
