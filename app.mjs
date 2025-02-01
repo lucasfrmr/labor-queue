@@ -5,6 +5,7 @@ import express from "express";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import dotenv from "dotenv";
+import { parse } from "json2csv";
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -204,7 +205,7 @@ app.post("/submit-queue", async (req, res) => {
           jobType,
           newTotalMinutes,
           JSON.stringify([
-            ...(JSON.parse(userRecord.laborShares || "[]")),
+            ...JSON.parse(userRecord.laborShares || "[]"),
             { jobType, minutes: minutesTillEndOfShift, timestamp },
           ]),
           new Date().toISOString(),
@@ -222,13 +223,22 @@ app.post("/submit-queue", async (req, res) => {
 app.post("/backup-users", async (req, res) => {
   try {
     const users = await db.all(`SELECT * FROM users`);
+    const backupDir = path.join(__dirname, "backups");
+
+    // Check if the backups directory exists; if not, create it.
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
+
     const filename = `userBackup-${new Date()
       .toLocaleString("en-US", { timeZone: "America/Chicago" })
       .replace(/[/:]/g, "-")}.json`;
+
     fs.writeFileSync(
-      path.join(__dirname, "backups", filename),
+      path.join(backupDir, filename),
       JSON.stringify(users, null, 2)
     );
+
     res.status(200).send(`Backup created successfully as ${filename}`);
   } catch (error) {
     console.error("Failed to backup user data:", error);
@@ -238,6 +248,12 @@ app.post("/backup-users", async (req, res) => {
 
 app.get("/list-backups", (req, res) => {
   const backupDir = path.join(__dirname, "backups");
+
+  // If the directory doesn't exist, respond with an empty array.
+  if (!fs.existsSync(backupDir)) {
+    return res.json([]);
+  }
+
   fs.readdir(backupDir, (err, files) => {
     if (err) {
       console.error("Failed to list backup files:", err);
@@ -294,6 +310,41 @@ app.delete("/delete-backup", (req, res) => {
     }
     res.send("Backup deleted successfully.");
   });
+});
+
+// Helper function to escape CSV values
+function csvEscape(value) {
+  if (value == null) return "";
+  let str = String(value);
+  // If the value contains commas, quotes, or newlines, wrap it in quotes and escape quotes by doubling them.
+  if (str.search(/("|,|\n)/g) >= 0) {
+    str = `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+app.get("/export-users", async (req, res) => {
+  try {
+    const users = await db.all("SELECT * FROM users");
+    const fields = [
+      "id",
+      "name",
+      "jobsTrained",
+      "totalMinutes",
+      "jobType",
+      "laborShares",
+      "lastModified",
+    ];
+    const opts = { fields };
+    const csv = parse(users, opts);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=users.csv");
+    res.send(csv);
+  } catch (error) {
+    console.error("Failed to export users:", error);
+    res.status(500).send("Error exporting users.");
+  }
 });
 
 app.use("/robots.txt", (req, res) => {

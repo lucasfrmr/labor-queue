@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "name": "Lucas Farmer",
+    "jobsTrained": "[\"OP\",\"clamp\",\"relo\",\"hau2\"]",
+    "totalMinutes": 299,
+    "jobType": "op",
+    "laborShares": "[{\"jobType\":\"op\",\"minutes\":239,\"timestamp\":\"2025-02-01T08:30:05.480Z\"}]",
+    "lastModified": "2025-02-01T08:30:05.486Z"
+  }
+]

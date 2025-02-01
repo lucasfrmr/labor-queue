@@ -1,6 +1,14 @@
 body {
-    background-color: rgb(93, 93, 93);
-}
-.recent-labor-shared {
-    background-color: grey;
-}
+    background-color: #5d5d5d;
+    color: #f8f9fa;
+  }
+  
+  .table-dark th,
+  .table-dark td {
+    vertical-align: middle;
+  }
+  
+  .card {
+    border-radius: 0.5rem;
+  }
+  
