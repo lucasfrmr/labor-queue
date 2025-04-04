@@ -1,0 +1,16 @@
+{
+    "name": "lucasfarmer.com",
+    "version": "1.0.0",
+    "description": "Dev",
+    "license": "UNLICENSED",
+    "main": "app.mjs",
+    "scripts": {
+      "start": "node app.mjs"
+    },
+    "dependencies": {
+      "express": "^4.18.3",
+      "mongodb": "^6.5.0",
+      "ws": "^8.16.0"
+    }
+  }
+  

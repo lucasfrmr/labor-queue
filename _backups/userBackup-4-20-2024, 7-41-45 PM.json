@@ -1,0 +1,247 @@
+[
+  {
+    "_id": "662317030698bd9fcb212193",
+    "name": "Farmer,Lucas",
+    "jobsTrained": [
+      "OP",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 630,
+    "jobType": "Dock",
+    "laborShares": [
+      {
+        "jobType": "Dock",
+        "minutes": 726,
+        "timestamp": "2024-04-20T23:23:18.423Z"
+      }
+    ],
+    "lastModified": "2024-04-20T23:23:18.543Z"
+  },
+  {
+    "_id": "662317130698bd9fcb212194",
+    "name": "Williams,Marissa",
+    "jobsTrained": [
+      "OP",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 630,
+    "jobType": "Op",
+    "laborShares": [
+      {
+        "jobType": "Op",
+        "minutes": 726,
+        "timestamp": "2024-04-20T23:23:18.423Z"
+      }
+    ],
+    "lastModified": "2024-04-20T23:23:18.677Z"
+  },
+  {
+    "_id": "662317310698bd9fcb212195",
+    "name": "Farmer,Dax",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 720,
+    "jobType": "Clamp",
+    "laborShares": [
+      {
+        "jobType": "Clamp",
+        "minutes": 726,
+        "timestamp": "2024-04-20T23:23:18.423Z"
+      }
+    ],
+    "lastModified": "2024-04-20T23:23:18.609Z"
+  },
+  {
+    "_id": "66245cc774b4d8b9f0781ef3",
+    "name": "Knapp,Alex Elizabeth",
+    "jobsTrained": [
+      "reach",
+      "hau2"
+    ],
+    "totalMinutes": 660
+  },
+  {
+    "_id": "66245d3274b4d8b9f0781ef4",
+    "name": "Tompkins,Jessica",
+    "jobsTrained": [
+      "reach",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 360
+  },
+  {
+    "_id": "66245dab74b4d8b9f0781ef5",
+    "name": "Steward,Patrick",
+    "jobsTrained": [
+      "reach",
+      "hau2"
+    ],
+    "totalMinutes": 0
+  },
+  {
+    "_id": "66245df474b4d8b9f0781ef6",
+    "name": "Smith,Teo",
+    "jobsTrained": [
+      "OP",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 1110
+  },
+  {
+    "_id": "66245e4874b4d8b9f0781ef7",
+    "name": "CASTANEDA JR,ELOY",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 1800
+  },
+  {
+    "_id": "66245e6c74b4d8b9f0781ef8",
+    "name": "Ortiz,Adriana",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 720
+  },
+  {
+    "_id": "66245e9f74b4d8b9f0781ef9",
+    "name": "Marquez,Gabriel",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 1080
+  },
+  {
+    "_id": "66245ec874b4d8b9f0781efa",
+    "name": "Presley,Jason",
+    "jobsTrained": [
+      "OP",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 360
+  },
+  {
+    "_id": "66245ee574b4d8b9f0781efb",
+    "name": "hernandez,Bryant",
+    "jobsTrained": [
+      "reach",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 1440
+  },
+  {
+    "_id": "66245f4d74b4d8b9f0781efc",
+    "name": "Lopez,Miguel",
+    "jobsTrained": [
+      "reach",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 600
+  },
+  {
+    "_id": "66245f9374b4d8b9f0781efd",
+    "name": "mercado,Lupita",
+    "jobsTrained": [
+      "reach"
+    ],
+    "totalMinutes": 0
+  },
+  {
+    "_id": "66245fa274b4d8b9f0781efe",
+    "name": "Ceniceros,Sarahi Cruz",
+    "jobsTrained": [
+      "reach",
+      "clamp"
+    ],
+    "totalMinutes": 0
+  },
+  {
+    "_id": "66245feb74b4d8b9f0781eff",
+    "name": "Steemer,Fabion",
+    "jobsTrained": [
+      "reach",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 720
+  },
+  {
+    "_id": "6624600274b4d8b9f0781f00",
+    "name": "Costlow,Seth",
+    "jobsTrained": [
+      "reach",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 1440
+  },
+  {
+    "_id": "6624602474b4d8b9f0781f01",
+    "name": "Lopez,Danyel",
+    "jobsTrained": [
+      "reach",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 1080
+  },
+  {
+    "_id": "6624603d74b4d8b9f0781f02",
+    "name": "Brown,Chris",
+    "jobsTrained": [
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 600
+  },
+  {
+    "_id": "6624605374b4d8b9f0781f03",
+    "name": "Lopez,Ricky",
+    "jobsTrained": [
+      "reach",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 2160
+  },
+  {
+    "_id": "6624606474b4d8b9f0781f04",
+    "name": "Tovar,Stephanie",
+    "jobsTrained": [
+      "relo"
+    ],
+    "totalMinutes": 0
+  },
+  {
+    "_id": "6624607974b4d8b9f0781f05",
+    "name": "Ramirez,Jessie",
+    "jobsTrained": [],
+    "totalMinutes": 720
+  }
+]

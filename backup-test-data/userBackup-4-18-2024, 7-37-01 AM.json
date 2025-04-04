@@ -1,0 +1,226 @@
+[
+  {
+    "_id": "661c81f7c798f5b9d49152d4",
+    "name": "Lucas F",
+    "jobsTrained": [
+      "OP",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 4963,
+    "jobType": "Clamp",
+    "laborShares": [
+      {
+        "jobType": "Dock",
+        "minutes": 585,
+        "timestamp": "2024-04-15T01:44:04.933Z"
+      },
+      {
+        "jobType": "Relo",
+        "minutes": 272,
+        "timestamp": "2024-04-15T06:57:03.155Z"
+      },
+      {
+        "jobType": "Op",
+        "minutes": 269,
+        "timestamp": "2024-04-15T07:00:09.494Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 1338,
+        "timestamp": "2024-04-16T13:11:49.036Z"
+      },
+      {
+        "jobType": "Clamp",
+        "minutes": 1334,
+        "timestamp": "2024-04-16T13:15:19.250Z"
+      },
+      {
+        "jobType": "Clamp",
+        "minutes": 445,
+        "timestamp": "2024-04-17T04:04:04.947Z"
+      }
+    ],
+    "lastModified": "2024-04-17T04:04:05.473Z"
+  },
+  {
+    "_id": "661c820ac798f5b9d49152d5",
+    "name": "Dax F",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 5735,
+    "jobType": "Op",
+    "laborShares": [
+      {
+        "jobType": "Dock",
+        "minutes": 394,
+        "timestamp": "2024-04-15T04:55:44.832Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 272,
+        "timestamp": "2024-04-15T06:57:03.155Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 269,
+        "timestamp": "2024-04-15T07:00:09.493Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 1341,
+        "timestamp": "2024-04-16T13:08:02.297Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 1341,
+        "timestamp": "2024-04-16T13:08:24.422Z"
+      },
+      {
+        "jobType": "Op",
+        "minutes": 1338,
+        "timestamp": "2024-04-16T13:11:49.036Z"
+      }
+    ],
+    "lastModified": "2024-04-16T13:11:49.529Z"
+  },
+  {
+    "_id": "661c8229c798f5b9d49152d6",
+    "name": "Marissa W",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "hau2"
+    ],
+    "totalMinutes": 5882,
+    "jobType": "Dock",
+    "laborShares": [
+      {
+        "jobType": "Dock",
+        "minutes": 398,
+        "timestamp": "2024-04-15T04:51:10.885Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 381,
+        "timestamp": "2024-04-15T05:08:48.346Z"
+      },
+      {
+        "jobType": "Clamp",
+        "minutes": 272,
+        "timestamp": "2024-04-15T06:57:03.155Z"
+      },
+      {
+        "jobType": "Op",
+        "minutes": 269,
+        "timestamp": "2024-04-15T07:00:45.070Z"
+      },
+      {
+        "jobType": "Op",
+        "minutes": 1338,
+        "timestamp": "2024-04-16T13:11:49.036Z"
+      },
+      {
+        "jobType": "Reach",
+        "minutes": 445,
+        "timestamp": "2024-04-17T04:04:04.947Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 1434,
+        "timestamp": "2024-04-18T11:35:19.623Z"
+      }
+    ],
+    "lastModified": "2024-04-18T11:35:19.914Z"
+  },
+  {
+    "_id": "661c8242c798f5b9d49152d7",
+    "name": "Bobby J",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "hau2"
+    ],
+    "totalMinutes": 5832,
+    "jobType": "Dock",
+    "laborShares": [
+      {
+        "jobType": "Dock",
+        "minutes": 393,
+        "timestamp": "2024-04-15T04:56:57.275Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 386,
+        "timestamp": "2024-04-15T05:03:41.142Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 384,
+        "timestamp": "2024-04-15T05:05:14.918Z"
+      },
+      {
+        "jobType": "Reach",
+        "minutes": 272,
+        "timestamp": "2024-04-15T06:57:03.155Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 269,
+        "timestamp": "2024-04-15T07:00:09.493Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 1334,
+        "timestamp": "2024-04-16T13:15:19.250Z"
+      },
+      {
+        "jobType": "Reach",
+        "minutes": 445,
+        "timestamp": "2024-04-17T04:04:04.947Z"
+      },
+      {
+        "jobType": "Dock",
+        "minutes": 1434,
+        "timestamp": "2024-04-18T11:35:19.622Z"
+      }
+    ],
+    "lastModified": "2024-04-18T11:35:19.841Z"
+  },
+  {
+    "_id": "661e76c85ac5c9b25a0febff",
+    "name": "Albert H",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "clamp",
+      "hau2"
+    ],
+    "totalMinutes": 4733,
+    "jobType": "Op",
+    "laborShares": [
+      {
+        "jobType": "Dock",
+        "minutes": 1341,
+        "timestamp": "2024-04-16T13:08:02.296Z"
+      },
+      {
+        "jobType": "HAU2",
+        "minutes": 1338,
+        "timestamp": "2024-04-16T13:11:49.036Z"
+      },
+      {
+        "jobType": "Op",
+        "minutes": 1334,
+        "timestamp": "2024-04-16T13:15:19.250Z"
+      }
+    ],
+    "lastModified": "2024-04-16T13:15:16.386Z"
+  }
+]

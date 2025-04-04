@@ -1,0 +1,34 @@
+[
+  {
+    "_id": "662317030698bd9fcb212193",
+    "name": "Lucas F",
+    "jobsTrained": [
+      "OP",
+      "clamp",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 0
+  },
+  {
+    "_id": "662317130698bd9fcb212194",
+    "name": "Marissa W",
+    "jobsTrained": [
+      "OP",
+      "relo",
+      "hau2"
+    ],
+    "totalMinutes": 0
+  },
+  {
+    "_id": "662317310698bd9fcb212195",
+    "name": "Dax F",
+    "jobsTrained": [
+      "reach",
+      "OP",
+      "clamp",
+      "hau2"
+    ],
+    "totalMinutes": 0
+  }
+]

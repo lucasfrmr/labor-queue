@@ -1,0 +1,29 @@
+# Node modules and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dotenv environment files
+.env
+.env.local
+.env.*.local
+
+# OS stuff
+.DS_Store
+Thumbs.db
+
+# PM2 logs
+pids
+logs
+*.pid
+*.seed
+
+# Backup or build files
+dist/
+build/
+
+# SQLite DB file (if using)
+*.db
+*.db-wal
+*.db-shm
