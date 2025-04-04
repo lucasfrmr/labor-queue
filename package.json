@@ -1,19 +1,25 @@
 {
-    "name": "labor-queue",
-    "version": "1.0.0",
-    "main": "app.mjs",
-    "type": "module",
-    "scripts": {
-      "start": "node app.mjs"
-    },
-    "dependencies": {
-      "dotenv": "^16.0.0",
-      "express": "^4.17.1",
-      "mongodb": "^4.1.0"
-    },
-    "engines": {
-      "node": ">=14.0.0"
-    },
-    "author": "lucasfrmr",
-    "license": "ISC"
-  }
+  "name": "labor-queue",
+  "version": "1.0.0",
+  "main": "app.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node app.mjs",
+    "dev": "nodemon app.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.1",
+    "json2csv": "^6.0.0-alpha.2",
+    "sqlite": "^4.2.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "lucasfrmr",
+  "license": "ISC"
+}
