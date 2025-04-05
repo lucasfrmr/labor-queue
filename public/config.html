@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Configuration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/laborqueue-modified-bootstrap.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Labor Queue Configuration</h1>
+            <p class="lead">Manage system settings and shift schedules</p>
+        </div>
+    </div>
+
+    <!-- Main Configuration Card -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">System Settings</h5>
+            <div id="save-status" class="text-success"></div>
+        </div>
+        <div class="card-body">
+            <form id="config-form">
+                <!-- Timezone Selection -->
+                <div class="mb-4">
+                    <label for="timezone" class="form-label">System Timezone</label>
+                    <select class="form-select" id="timezone" name="timezone" required>
+                        <option value="America/Chicago">America/Chicago (CST/CDT)</option>
+                        <option value="America/New_York">America/New_York (EST/EDT)</option>
+                        <option value="America/Los_Angeles">America/Los_Angeles (PST/PDT)</option>
+                        <option value="America/Denver">America/Denver (MST/MDT)</option>
+                        <option value="UTC">UTC (Coordinated Universal Time)</option>
+                    </select>
+                    <div class="form-text">This timezone will be used for all time calculations and displays.</div>
+                </div>
+                
+                <!-- Shift Management Section -->
+                <div class="mb-4">
+                    <h5>Shift Schedule Management</h5>
+                    <div class="form-text mb-3">Define the shifts for labor scheduling. Times should be in 24-hour format (HH:MM).</div>
+                    
+                    <!-- Shift List Table -->
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Shift Name</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Hours</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shifts-table-body">
+                            <!-- Shifts will be populated dynamically -->
+                        </tbody>
+                    </table>
+                    
+                    <!-- Add New Shift Button -->
+                    <button type="button" class="btn btn-outline-primary" id="add-shift-btn">
+                        <i class="bi bi-plus-circle"></i> Add New Shift
+                    </button>
+                </div>
+                
+                <!-- Save Button -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary">Save Configuration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Navigation Links -->
+    <div class="d-flex justify-content-between">
+        <a href="/admin" class="btn btn-secondary">Back to Admin</a>
+        <a href="/laborqueue" class="btn btn-primary">Go to Labor Queue</a>
+    </div>
+</div>
+
+<!-- Add Shift Modal -->
+<div class="modal fade" id="shift-modal" tabindex="-1" aria-labelledby="shift-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shift-modal-label">Add New Shift</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="shift-form">
+                    <input type="hidden" id="shift-index" value="-1">
+                    <div class="mb-3">
+                        <label for="shift-name" class="form-label">Shift Name</label>
+                        <input type="text" class="form-control" id="shift-name" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="shift-start" class="form-label">Start Time (24h)</label>
+                            <input type="time" class="form-control" id="shift-start" required>
+                        </div>
+                        <div class="col">
+                            <label for="shift-end" class="form-label">End Time (24h)</label>
+                            <input type="time" class="form-control" id="shift-end" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-shift-btn">Save Shift</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/config.js"></script>
+</body>
+</html>

@@ -24,6 +24,7 @@ const db = new Loki(dbFile, {
 
 // Collection reference
 let users;
+let config;
 
 function initializeDb() {
   // Initialize collections if they don't exist
@@ -35,6 +36,24 @@ function initializeDb() {
     });
     console.log('Created users collection');
   }
+  
+  // Add config collection for app settings
+  config = db.getCollection('config');
+  if (config === null) {
+    config = db.addCollection('config');
+    // Initialize with default config
+    config.insert({
+      id: 'app_config',
+      timezone: 'America/Chicago',
+      shifts: [
+        { name: "Morning", startTime: "07:00", endTime: "15:00", hours: 8 },
+        { name: "Evening", startTime: "15:00", endTime: "23:00", hours: 8 },
+        { name: "Night", startTime: "23:00", endTime: "07:00", hours: 8 }
+      ]
+    });
+    console.log('Created config collection with default settings');
+  }
+  
   console.log('✅ LokiJS database initialized!');
 }
 
@@ -60,7 +79,7 @@ app.get("/userdata", async (req, res) => {
   try {
     const allUsers = users.find();
     res.json(allUsers);
-    console.log("get user data" + JSON.stringify(allUsers));
+    console.log(`Retrieved ${allUsers.length} users from database`);
   } catch (error) {
     console.error("Failed to get user data:", error);
     res.status(500).send("Error getting user data.");
@@ -70,7 +89,7 @@ app.get("/userdata", async (req, res) => {
 app.post("/users", async (req, res) => {
   console.log("Users post data:", req.body);
   try {
-    const { name, jobsTrained, totalMinutes } = req.body;
+    const { name, jobsTrained, totalMinutes, shift } = req.body;
     const userExists = users.findOne({ name });
     if (userExists) {
       return res
@@ -83,6 +102,7 @@ app.post("/users", async (req, res) => {
     
     users.insert({
       name,
+      shift, // Adding the shift field
       jobsTrained: jobsTrainedArray,
       totalMinutes: parseInt(totalMinutes, 10),
     });
@@ -96,7 +116,7 @@ app.post("/users", async (req, res) => {
 
 app.put("/users/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, jobsTrained, totalMinutes, laborShare } = req.body;
+  const { name, jobsTrained, totalMinutes, laborShare, shift } = req.body;
   try {
     console.log(`Updating user with ID: ${id}, type: ${typeof id}`);
     
@@ -118,6 +138,7 @@ app.put("/users/:id", async (req, res) => {
     user.name = name;
     user.jobsTrained = jobsTrained;
     user.totalMinutes = totalMinutes;
+    user.shift = shift; // Add shift field
     
     // If a labor share was provided, add it to the user's labor shares array
     if (laborShare) {
@@ -306,6 +327,75 @@ app.delete("/delete-backup", (req, res) => {
     }
     res.send("Backup deleted successfully.");
   });
+});
+
+app.get("/config", async (req, res) => {
+  try {
+    // Get the app configuration (there should be only one document)
+    const appConfig = config.findOne({ id: 'app_config' });
+    if (!appConfig) {
+      // Create default config if not found
+      const defaultConfig = {
+        id: 'app_config',
+        timezone: 'America/Chicago',
+        shifts: [
+          { name: "Morning", startTime: "07:00", endTime: "15:00", hours: 8 },
+          { name: "Evening", startTime: "15:00", endTime: "23:00", hours: 8 },
+          { name: "Night", startTime: "23:00", endTime: "07:00", hours: 8 }
+        ]
+      };
+      config.insert(defaultConfig);
+      db.saveDatabase();
+      res.json(defaultConfig);
+    } else {
+      res.json(appConfig);
+    }
+  } catch (error) {
+    console.error("Failed to get configuration:", error);
+    res.status(500).json({ error: "Error getting configuration" });
+  }
+});
+
+app.post("/config", async (req, res) => {
+  try {
+    const { timezone, shifts } = req.body;
+    
+    // Validate input
+    if (!timezone) {
+      return res.status(400).json({ error: "Timezone is required" });
+    }
+    
+    if (!Array.isArray(shifts)) {
+      return res.status(400).json({ error: "Shifts must be an array" });
+    }
+    
+    // Get existing config or create a new one
+    let appConfig = config.findOne({ id: 'app_config' });
+    if (!appConfig) {
+      appConfig = {
+        id: 'app_config',
+        timezone,
+        shifts
+      };
+      config.insert(appConfig);
+    } else {
+      appConfig.timezone = timezone;
+      appConfig.shifts = shifts;
+      config.update(appConfig);
+    }
+    
+    db.saveDatabase();
+    res.json({ message: "Configuration saved successfully", config: appConfig });
+  } catch (error) {
+    console.error("Failed to save configuration:", error);
+    res.status(500).json({ error: "Error saving configuration" });
+  }
+});
+
+// Route to serve config.html page
+app.get("/config-page", (req, res) => {
+  console.log(req.url, req.ip);
+  res.sendFile(__dirname + "/public/config.html");
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
