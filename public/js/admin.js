@@ -2,9 +2,17 @@ document.addEventListener("DOMContentLoaded", function () {
   let allUserData = {};
 
   function formatMinutesToHours(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}m`;
+    if (minutes >= 0) {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return `${hours}h ${mins}m`;
+    } else {
+      // Handle negative minutes correctly
+      const absoluteMinutes = Math.abs(minutes);
+      const hours = Math.floor(absoluteMinutes / 60);
+      const mins = absoluteMinutes % 60;
+      return `-${hours}h ${mins}m`;
+    }
   }
 
   function fetchAndPopulateUsers() {
@@ -16,9 +24,10 @@ document.addEventListener("DOMContentLoaded", function () {
         userList.innerHTML = "";
 
         users.forEach((user) => {
-          allUserData[user._id] = user;
+          // Store users by their $loki ID instead of _id
+          allUserData[user.$loki] = user;
           const formattedTime = formatMinutesToHours(user.totalMinutes);
-          const hasJob = (job) => (user.jobsTrained.includes(job) ? "✓" : "");
+          const hasJob = (job) => (user.jobsTrained?.includes(job) ? "✓" : "");
 
           const userRow = `<tr>
                         <td class="name">${user.name}</td>
@@ -31,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <td class="relo">${hasJob("relo")}</td>
                         <td class="hau2">${hasJob("hau2")}</td>
                         <td class="actions"><button class="btn btn-primary" onclick="openUpdateModal('${
-                          user._id
+                          user.$loki
                         }')">Edit</button></td>
                     </tr>`;
           userList.innerHTML += userRow;
@@ -59,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function populateUserForm(userData) {
     console.log("userData:", userData); // This helps in debugging to see what data is being passed.
     const modal = document.getElementById("updateUserModal");
-    modal.dataset.userId = userData._id;
+    modal.dataset.userId = userData.$loki; // Use $loki instead of _id
 
     const updateUserName = document.getElementById("updateUserName");
     const updateUserHours = document.getElementById("updateUserHours");
@@ -87,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Check appropriate checkboxes for jobs trained.
     jobsTrainedCheckboxes.forEach((checkbox) => {
-      checkbox.checked = userData.jobsTrained.includes(checkbox.value);
+      checkbox.checked = userData.jobsTrained?.includes(checkbox.value) || false;
     });
 
     // Populate the labor shares table if the data is available and is an array.
@@ -205,13 +214,21 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     }
 
+    console.log("Updating user with ID:", userId);
+    console.log("User data:", userData);
+
     // API call to update the user
     fetch(`/users/${userId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log("Update Success:", data);
         modalInstance.hide();
@@ -219,6 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .catch((error) => {
         console.error("Error updating user:", error);
+        alert("Failed to update user: " + error.message);
         modalInstance.hide(); // Hide the modal even if there is an error
       });
   }
@@ -306,25 +324,6 @@ document.addEventListener("DOMContentLoaded", function () {
           });
       }
     });
-
-  // document.getElementById('restoreUsersButton').addEventListener('click', function() {
-  //     const selectedFile = document.getElementById('backupFilesDropdown').value;
-  //     console.log(selectedFile);
-  //     if (!selectedFile) return alert('No backup selected.');
-
-  //     if (confirm("Are you sure you want to restore this backup? This will overwrite current data.")) {
-  //         fetch(`/restore-users`, {
-  //             method: 'POST',
-  //             headers: { 'Content-Type': 'application/json' },
-  //             body: JSON.stringify({ filename: selectedFile })
-  //         })
-  //         .then(response => response.text())
-  //         .then(result => alert(result))
-  //         .catch(error => console.error('Error restoring users:', error));
-  //     }
-  //     // reload the page after restoring the data
-  //     window.location.reload();
-  // });
 });
 
 document
@@ -355,14 +354,3 @@ document
         .catch((error) => console.error("Error deleting backup:", error));
     }
   });
-
-// document.getElementById('restoreUsersButton').addEventListener('click', function() {
-//     if (confirm("Are you sure you want to restore user data? This will overwrite current data.")) {
-//         fetch('/restore-users', { method: 'POST' })
-//             .then(response => response.text())
-//             .then(result => alert(result))
-//             .catch(error => console.error('Error restoring users:', error));
-//     }
-//     // reload the page after restoring the data
-//     window.location.reload();
-// });
