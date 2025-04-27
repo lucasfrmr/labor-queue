@@ -1,10 +1,19 @@
-// Main functionality on document ready
-document.addEventListener("DOMContentLoaded", function () {
-  // Add checkbox for filtering users with recent labor shares
-  // const excludeCheckbox = document.getElementById('excludeRecentLaborShares');
-  // excludeCheckbox.addEventListener('change', fetchAndDisplayData);
+document.addEventListener("DOMContentLoaded", () => {
+  const excludeCheckbox = document.getElementById("excludeRecentLaborShares");
+  excludeCheckbox.addEventListener("change", fetchAndDisplayData);
 
-  fetchAndDisplayData(); // Initial data fetch and display
+  // Mapping of job types to the corresponding table body IDs and filter keys.
+  const jobTabs = {
+    dock: { tableId: "#dockList", filter: null }, // "dock" shows all users
+    reach: { tableId: "#reachList", filter: "reach" },
+    op: { tableId: "#opList", filter: "OP" },
+    clamp: { tableId: "#clampList", filter: "clamp" },
+    hau2: { tableId: "#hau2List", filter: "hau2" },
+    relo: { tableId: "#reloList", filter: "relo" },
+  };
+
+  // Initial data load
+  fetchAndDisplayData();
 
   function fetchAndDisplayData() {
     fetch("/userdata")
@@ -15,140 +24,125 @@ document.addEventListener("DOMContentLoaded", function () {
           currentTime.getTime() - 12 * 60 * 60 * 1000
         );
 
-        const jobTabs = {
-          Dock: null, // Assuming 'Dock' tab includes all users
-          Op: "OP",
-          Clamp: "clamp",
-          Reach: "reach",
-          Relo: "relo",
-          HAU2: "hau2",
-        };
-
-        Object.entries(jobTabs).forEach(([tab, jobType]) => {
-          const tableBody = document.querySelector(
-            `#sortableTable${tab} .list`
-          );
+        // Loop through each job type tab
+        Object.entries(jobTabs).forEach(([tab, { tableId, filter }]) => {
+          const tableBody = document.querySelector(tableId);
           tableBody.innerHTML = ""; // Clear existing rows
 
+          // Filter users based on job type and, optionally, recent labor shares
           let filteredData = data.filter((item) => {
-            // if (excludeCheckbox.checked) {
-            //     return (!jobType || item.jobsTrained.includes(jobType)) &&
-            //            !item.laborShares.some(share => new Date(share.timestamp) > twelveHoursAgo);
-            // }
-            return !jobType || item.jobsTrained.includes(jobType);
+            const passesJobFilter =
+              !filter || item.jobsTrained.includes(filter);
+            const passesRecentShare =
+              !excludeCheckbox.checked ||
+              !item.laborShares.some(
+                (share) => new Date(share.timestamp) > twelveHoursAgo
+              );
+            return passesJobFilter && passesRecentShare;
           });
 
-          let sortedData = filteredData.sort(
+          // Sort users by total minutes (ascending)
+          filteredData.sort(
             (a, b) => parseInt(a.totalMinutes) - parseInt(b.totalMinutes)
           );
 
-          sortedData.forEach((item) => {
-            const rowElement = document.createElement("tr");
-            rowElement.setAttribute("data-user-key", item.name); // Ensure each row has this attribute
-            const formattedMinutes = formatMinutesToHours(item.totalMinutes);
-            rowElement.innerHTML = `
-                        <td class="name">${item.name}</td>
-                        <td class="minutes">${formattedMinutes}</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm add-to-queue-btn">Add to Queue</button>
-                        </td>
-                    `;
+          // Create table rows for each user
+          filteredData.forEach((item) => {
+            const row = document.createElement("tr");
+            row.setAttribute("data-user-key", item.name);
+            row.innerHTML = `
+              <td class="name">${item.name}</td>
+              <td class="minutes">${formatMinutesToHours(
+                item.totalMinutes
+              )}</td>
+              <td>
+                <button class="btn btn-primary btn-sm add-to-queue-btn">Add to Queue</button>
+              </td>
+            `;
+            tableBody.appendChild(row);
 
-            tableBody.appendChild(rowElement);
-
-            const addButton = rowElement.querySelector(".add-to-queue-btn");
-            addButton.addEventListener("click", function () {
-              addToQueue(item, tab);
-            });
+            // Add event listener for "Add to Queue" button
+            row
+              .querySelector(".add-to-queue-btn")
+              .addEventListener("click", () => {
+                addToQueue(item, tab);
+              });
           });
         });
       })
-      .catch((error) => console.error("Error:", error));
+      .catch((error) => console.error("Error fetching user data:", error));
   }
 
-  // Function to add a user to the queue
   function addToQueue(item, jobType) {
-    const queueTableBody = document.querySelector("#queueTableBody");
-    const formattedTotalTime = formatMinutesToHours(item.totalMinutes);
-    const minutesTillEndOfShift = calculateTimeTillEndOfShift();
-    const formattedTimeTillShiftEnds = formatMinutesToHours(
-      minutesTillEndOfShift
-    );
+    const queueTableBody = document.getElementById("queueTableBody");
+    const minutesTillEOS = calculateTimeTillEndOfShift();
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${item.name}</td>
+      <td>${formatMinutesToHours(minutesTillEOS)}</td>
+      <td>${jobType}</td>
+      <td>
+        <button class="btn btn-danger btn-sm remove-from-queue-btn">Remove</button>
+      </td>
+    `;
+    queueTableBody.appendChild(row);
 
-    const rowElement = document.createElement("tr");
-    rowElement.innerHTML = `
-            <td>${item.name}</td>
-            <td>${formattedTimeTillShiftEnds}</td>
-            <td>${jobType}</td>
-            <td>
-                <!-- Include remove button if needed in the future -->
-            </td>
-        `;
-    queueTableBody.appendChild(rowElement);
-
-    // Remove user from all tables
+    // Remove the user from all labor lists so they can’t be added twice
     document
       .querySelectorAll(`tr[data-user-key="${item.name}"]`)
       .forEach((el) => el.remove());
+
+    // Add functionality to remove the user from the queue
+    row
+      .querySelector(".remove-from-queue-btn")
+      .addEventListener("click", () => {
+        row.remove();
+        // Optionally, re-fetch data to put the user back into the available lists
+        fetchAndDisplayData();
+      });
   }
 
-  // Additional handlers and utility functions
-  document
-    .getElementById("resetQueueButton")
-    .addEventListener("click", function () {
-      window.location.reload(); // Refreshes the page
-    });
+  // Queue reset handler
+  document.getElementById("resetQueueButton").addEventListener("click", () => {
+    window.location.reload();
+  });
 
-  document
-    .getElementById("submitQueueButton")
-    .addEventListener("click", function () {
-      const queueTableBody = document.querySelector("#queueTableBody");
-      const users = [];
-
-      queueTableBody.querySelectorAll("tr").forEach((row) => {
-        const name = row.cells[0].textContent; // Assuming the first cell contains the name
-        const jobType = row.cells[2].textContent; // Assuming the third cell contains the job type
-        let minutesTillEndOfShift = calculateTimeTillEndOfShift(); // Calculate remaining minutes
-
-        console.log(
-          `Time till end of shift for ${name}: ${formatMinutesToHours(
-            minutesTillEndOfShift
-          )}`
-        ); // Logging the time till end of shift
-        users.push({
-          name: name,
-          jobType: jobType,
-          minutesTillEndOfShift: minutesTillEndOfShift,
-          timestamp: new Date().toISOString(), // Include a timestamp for tracking
-        });
+  // Queue submission handler
+  document.getElementById("submitQueueButton").addEventListener("click", () => {
+    const queueRows = document.querySelectorAll("#queueTableBody tr");
+    const users = [];
+    queueRows.forEach((row) => {
+      const name = row.cells[0].textContent;
+      const jobType = row.cells[2].textContent;
+      users.push({
+        name,
+        jobType,
+        minutesTillEndOfShift: calculateTimeTillEndOfShift(),
+        timestamp: new Date().toISOString(),
       });
-
-      // Now send this data to the server
-      fetch("/submit-queue", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(users),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Queue submitted:", data);
-          alert("Queue successfully submitted!");
-          queueTableBody.innerHTML = ""; // Clear the queue table after submission
-        })
-        .catch((error) => {
-          console.error("Error submitting queue:", error);
-          alert("Failed to submit queue. Check console for more details.");
-        });
     });
+
+    fetch("/submit-queue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(users),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then((data) => {
+        alert("Queue successfully submitted!");
+        document.getElementById("queueTableBody").innerHTML = "";
+      })
+      .catch((error) => {
+        console.error("Error submitting queue:", error);
+        alert("Failed to submit queue.");
+      });
+  });
 });
 
+// Utility functions
 function formatMinutesToHours(minutes) {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
@@ -156,26 +150,10 @@ function formatMinutesToHours(minutes) {
 }
 
 function calculateTimeTillEndOfShift() {
-  let now = new Date();
-  let target = new Date();
-  target.setHours(6, 30, 0, 0); // Set the target time to 06:30 AM
-
-  // If the current time is already past 06:30 AM today, set the target for the next day
-  if (now >= target) {
-    target.setDate(target.getDate() + 1);
-  }
-
-  let timeDifferenceMs = target - now;
-  let minutesTillEndOfShift = Math.floor(timeDifferenceMs / (1000 * 60)); // Convert milliseconds to minutes
-  return minutesTillEndOfShift;
-}
-
-function updateCountdown(userName) {
-  const timeCell = document.getElementById(`time-${userName}`);
-  if (!timeCell) return; // In case the row has been removed
-
-  let minutesTillEndOfShift = calculateTimeTillEndOfShift();
-  timeCell.textContent = formatMinutesToHours(minutesTillEndOfShift);
-
-  setTimeout(() => updateCountdown(userName), 60000); // Update every minute
+  const now = new Date();
+  const target = new Date();
+  target.setHours(6, 30, 0, 0);
+  if (now >= target) target.setDate(target.getDate() + 1);
+  const diffMs = target - now;
+  return Math.floor(diffMs / (1000 * 60));
 }

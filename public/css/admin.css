@@ -1,3 +1,31 @@
+/* admin.css */
+
+/* Use the same dark background and text color as laborqueue */
+body {
+  background-color: rgb(93, 93, 93);
+  color: #f8f9fa;
+}
+
+/* Card styling */
+.card {
+  background-color: #6c757d;
+  border: none;
+}
+
+/* Ensure tables use the dark theme */
+.table {
+  background-color: transparent;
+  color: #f8f9fa;
+}
+
+/* Fix widths for small number inputs */
 .input-fixed-width {
-    width: 80px;  /* Adjust this width as needed */
-  }
+  width: 80px;
+}
+
+/* Optional: style modal content for a dark appearance */
+.modal-content {
+  background-color: #343a40;
+  color: #f8f9fa;
+  border: none;
+}

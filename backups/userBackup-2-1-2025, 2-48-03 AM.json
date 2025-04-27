@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Lucas Farmer",
+    "jobsTrained": "[\"OP\",\"clamp\",\"relo\",\"hau2\"]",
+    "totalMinutes": 522,
+    "jobType": "dock",
+    "laborShares": "[{\"jobType\":\"op\",\"minutes\":239,\"timestamp\":\"2025-02-01T08:30:05.480Z\"},{\"jobType\":\"dock\",\"minutes\":223,\"timestamp\":\"2025-02-01T08:46:50.979Z\"}]",
+    "lastModified": "2025-02-01T08:46:50.986Z"
+  },
+  {
+    "id": 2,
+    "name": "Edge on mac",
+    "jobsTrained": "[\"reach\"]",
+    "totalMinutes": 1138,
+    "jobType": "reach",
+    "laborShares": "[{\"jobType\":\"reach\",\"minutes\":223,\"timestamp\":\"2025-02-01T08:46:50.979Z\"}]",
+    "lastModified": "2025-02-01T08:46:50.988Z"
+  }
+]
